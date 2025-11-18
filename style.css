@@ -1,0 +1,278 @@
+/* --- CSS GLOBAL --- */
+:root {
+    /* Variáveis de Cores - Tema Claro (Padrão) */
+    --bg-color: #f0f2f5;
+    --sidebar-bg: #ffffff;
+    --header-bg: #ffffff;
+    --text-color: #333333;
+    --primary-color: #4F46E5; /* Índigo */
+    --secondary-color: #e0e7ff;
+    --border-color: #ddd;
+    --input-bg: #f9f9f9;
+}
+
+/* Tema Escuro */
+body.dark-mode {
+    --bg-color: #1a1a1a;
+    --sidebar-bg: #242424;
+    --header-bg: #242424;
+    --text-color: #e0e0e0;
+    --primary-color: #6366f1;
+    --secondary-color: #333;
+    --border-color: #444;
+    --input-bg: #333;
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    transition: background-color 0.3s, color 0.3s;
+}
+
+body {
+    background-color: var(--bg-color);
+    color: var(--text-color);
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+}
+
+/* --- TELA DE AUTENTICAÇÃO (LOGIN/CADASTRO) --- */
+.auth-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100%;
+    width: 100%;
+    position: absolute;
+    top: 0;
+    left: 0;
+    background-color: var(--bg-color);
+    z-index: 100; /* Fica acima de tudo */
+}
+
+.auth-card {
+    background-color: var(--sidebar-bg);
+    padding: 2rem;
+    border-radius: 12px;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+    width: 100%;
+    max-width: 400px;
+    text-align: center;
+    border: 1px solid var(--border-color);
+    max-height: 90vh;
+    overflow-y: auto;
+}
+
+.auth-title {
+    font-size: 1.8rem;
+    margin-bottom: 1.5rem;
+    color: var(--primary-color);
+    font-weight: bold;
+}
+
+.form-group {
+    margin-bottom: 1rem;
+    text-align: left;
+}
+
+.form-group label {
+    display: block;
+    font-size: 0.9rem;
+    margin-bottom: 0.3rem;
+}
+
+.form-group input {
+    width: 100%;
+    padding: 0.75rem;
+    border: 1px solid var(--border-color);
+    border-radius: 6px;
+    background-color: var(--input-bg);
+    color: var(--text-color);
+    outline: none;
+}
+
+.form-group input:focus {
+    border-color: var(--primary-color);
+}
+
+.btn-primary {
+    width: 100%;
+    padding: 0.75rem;
+    background-color: var(--primary-color);
+    color: white;
+    border: none;
+    border-radius: 6px;
+    font-size: 1rem;
+    cursor: pointer;
+    margin-top: 1rem;
+}
+
+.btn-primary:hover {
+    opacity: 0.9;
+}
+
+.toggle-auth {
+    margin-top: 1rem;
+    font-size: 0.9rem;
+    color: var(--primary-color);
+    cursor: pointer;
+    text-decoration: underline;
+}
+
+/* Esconde formulários que não estão ativos */
+.hidden {
+    display: none !important;
+}
+
+/* --- TELA PRINCIPAL (DASHBOARD) --- */
+.main-layout {
+    display: flex; /* Sidebar + Conteúdo */
+    height: 100vh;
+    width: 100%;
+}
+
+/* Sidebar */
+.sidebar {
+    width: 250px;
+    background-color: var(--sidebar-bg);
+    border-right: 1px solid var(--border-color);
+    display: flex;
+    flex-direction: column;
+    padding: 1rem;
+}
+
+.sidebar-logo {
+    font-size: 1.5rem;
+    font-weight: bold;
+    color: var(--primary-color);
+    margin-bottom: 2rem;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.nav-list {
+    list-style: none;
+    flex-grow: 1;
+}
+
+.nav-item {
+    margin-bottom: 0.5rem;
+}
+
+.nav-link {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 0.8rem;
+    text-decoration: none;
+    color: var(--text-color);
+    border-radius: 8px;
+    cursor: pointer;
+}
+
+.nav-link:hover, .nav-link.active {
+    background-color: var(--secondary-color);
+    color: var(--primary-color);
+}
+
+.logout-btn {
+    margin-top: auto;
+    color: #e02424;
+}
+
+.logout-btn:hover {
+    background-color: #fee2e2;
+    color: #c53030;
+}
+
+/* Conteúdo Principal */
+.content-area {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+}
+
+/* Cabeçalho */
+.header {
+    height: 70px;
+    background-color: var(--header-bg);
+    border-bottom: 1px solid var(--border-color);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 2rem;
+}
+
+.search-bar {
+    flex: 1;
+    max-width: 400px;
+    position: relative;
+}
+
+.search-bar input {
+    width: 100%;
+    padding: 0.6rem 1rem 0.6rem 2.5rem;
+    border-radius: 20px;
+    border: 1px solid var(--border-color);
+    background-color: var(--input-bg);
+    color: var(--text-color);
+}
+
+.search-icon {
+    position: absolute;
+    left: 10px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: #888;
+}
+
+.header-controls {
+    display: flex;
+    gap: 15px;
+}
+
+.control-btn {
+    background: none;
+    border: none;
+    cursor: pointer;
+    font-size: 1.5rem;
+    color: var(--text-color);
+    padding: 5px;
+    border-radius: 50%;
+    transition: transform 0.2s;
+}
+
+.control-btn:hover {
+    background-color: var(--secondary-color);
+}
+
+.control-btn.active-music {
+    color: var(--primary-color);
+    animation: pulse 2s infinite;
+}
+
+@keyframes pulse {
+    0% { transform: scale(1); }
+    50% { transform: scale(1.1); }
+    100% { transform: scale(1); }
+}
+
+/* Área de Conteúdo Real */
+.main-view {
+    padding: 2rem;
+    overflow-y: auto;
+    flex: 1;
+}
+
+.placeholder-content {
+    background-color: var(--sidebar-bg);
+    padding: 2rem;
+    border-radius: 10px;
+    border: 1px solid var(--border-color);
+}
