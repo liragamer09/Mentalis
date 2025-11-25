@@ -164,6 +164,16 @@
     </audio>
 
     <script>
+        /* ========================================
+         PASSO 2: INICIALIZAÇÃO DO SUPABASE
+         ========================================
+        */
+        // ATENÇÃO: Substitua 'SUA_URL_DO_SUPABASE' e 'SUA_CHAVE_ANON_DO_SUPABASE' pelos seus valores reais!
+        const SUPABASE_URL = 'SUA_URL_DO_SUPABASE'; 
+        const SUPABASE_ANON_KEY = 'SUA_CHAVE_ANON_DO_SUPABASE';
+
+        // Inicializa o cliente Supabase, permitindo que você chame os métodos de auth e banco de dados.
+        const supabase = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
         /* --- JAVASCRIPT (Lógica Simples) --- */
         
         // Elementos
@@ -261,3 +271,4 @@
 </body>
 
 </html>
+
