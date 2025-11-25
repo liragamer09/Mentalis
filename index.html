@@ -164,6 +164,12 @@
     </audio>
 
     <script>
+
+                                                        /*             SUPABASE          INICIO         */
+        /* ========================================================================================================================================== */
+
+
+        
         /* ========================================
          PASSO 2: INICIALIZAÇÃO DO SUPABASE
          ========================================
@@ -185,6 +191,94 @@
         const musicBtn = document.getElementById('music-btn');
         const audioPlayer = document.getElementById('bg-music');
 
+        
+        // Verifica o estado da sessão ao carregar
+            supabase.auth.getSession().then(({ data: { session } }) => {
+        // Esconde a tela de login se houver uma sessão ativa.
+            setAuthScreen(!session); 
+        });
+        
+        // Monitora mudanças de autenticação
+            supabase.auth.onAuthStateChange((event, session) => {
+            console.log('Evento de Autenticação:', event);
+        // Automaticamente esconde/mostra a tela de autenticação
+            setAuthScreen(!session); 
+        });
+
+        // 1. LOGIN
+async function handleLogin(event) {
+    event.preventDefault();
+    const email = document.getElementById('login-user').value;
+    const password = document.getElementById('login-pass').value;
+
+    const { error } = await supabase.auth.signInWithPassword({
+        email: email,
+        password: password,
+    });
+
+    if (error) {
+        console.error('Erro de Login:', error.message);
+        // Implementar feedback visual de erro para o usuário aqui
+        return;
+    }
+
+    console.log('Login bem-sucedido!');
+    // A transição de tela é feita automaticamente pelo 'onAuthStateChange'
+}
+
+        // 2. CADASTRO
+async function handleRegister(event) {
+    event.preventDefault();
+    const form = event.target;
+    const password = form.password.value;
+    const confirmPassword = form.confirm_password.value;
+
+    if (password !== confirmPassword) {
+        console.error('Erro de Cadastro: As senhas não coincidem.');
+        return;
+    }
+    
+    // 1. Coleta dos dados extras do formulário
+    const userMetadata = {
+        full_name: form.full_name.value,
+        dob: form.dob.value,
+        cpf: form.cpf.value,
+        username: form.username.value,
+    };
+
+    // 2. Chama a função de cadastro
+    const { data, error } = await supabase.auth.signUp({
+        email: form.email.value,
+        password: password,
+        options: {
+            data: userMetadata, // **IMPORTANTE:** Envia metadados com o usuário
+        }
+    });
+
+    // ... (tratamento de erros)
+
+    // Após o cadastro, retorna à tela de login
+    toggleAuthMode('login');
+}
+
+        // 3. LOGOUT
+async function handleLogout() {
+    const { error } = await supabase.auth.signOut();
+    
+    if (error) {
+        console.error('Erro ao fazer Logout:', error.message);
+        return;
+    }
+
+    console.log('Logout bem-sucedido!');
+    // A transição de tela de volta para o login é feita automaticamente pelo 'onAuthStateChange'
+}
+
+        
+                                                             /*             SUPABASE            FIM           */
+        /* ========================================================================================================================================== */
+
+        
         // 1. Alternar entre Login e Cadastro
         function toggleAuthMode(mode) {
             if (mode === 'register') {
@@ -193,8 +287,8 @@
             } else {
                 registerForm.classList.add('hidden');
                 loginForm.classList.remove('hidden');
-            }
-        }
+    }
+}
 
         // 2. Simular Login (Entrar no sistema)
         function handleLogin(event) {
@@ -271,5 +365,6 @@
 </body>
 
 </html>
+
 
 
