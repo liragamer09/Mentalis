@@ -1,14 +1,17 @@
+/* --- CSS GLOBAL --- */
 :root {
+    /* Variáveis de Cores - Tema Claro (Padrão) */
     --bg-color: #f0f2f5;
     --sidebar-bg: #ffffff;
     --header-bg: #ffffff;
     --text-color: #333333;
-    --primary-color: #4F46E5;
+    --primary-color: #4F46E5; /* Índigo */
     --secondary-color: #e0e7ff;
     --border-color: #ddd;
     --input-bg: #f9f9f9;
 }
 
+/* Tema Escuro */
 body.dark-mode {
     --bg-color: #1a1a1a;
     --sidebar-bg: #242424;
@@ -37,6 +40,7 @@ body {
     overflow: hidden;
 }
 
+/* --- TELA DE AUTENTICAÇÃO (LOGIN/CADASTRO) --- */
 .auth-container {
     display: flex;
     justify-content: center;
@@ -47,7 +51,7 @@ body {
     top: 0;
     left: 0;
     background-color: var(--bg-color);
-    z-index: 100;
+    z-index: 100; /* Fica acima de tudo */
 }
 
 .auth-card {
@@ -119,16 +123,19 @@ body {
     text-decoration: underline;
 }
 
+/* Esconde formulários que não estão ativos */
 .hidden {
     display: none !important;
 }
 
+/* --- TELA PRINCIPAL (DASHBOARD) --- */
 .main-layout {
-    display: flex;
+    display: flex; /* Sidebar + Conteúdo */
     height: 100vh;
     width: 100%;
 }
 
+/* Sidebar */
 .sidebar {
     width: 250px;
     background-color: var(--sidebar-bg);
@@ -183,6 +190,7 @@ body {
     color: #c53030;
 }
 
+/* Conteúdo Principal */
 .content-area {
     flex: 1;
     display: flex;
@@ -190,8 +198,10 @@ body {
     overflow: hidden;
 }
 
+/* Cabeçalho */
 .header {
     height: 70px;
+    /* Gradiente leve */
     background: linear-gradient(to bottom right, 
         var(--secondary-color) 0%, 
         var(--header-bg) 30%,    
@@ -258,6 +268,7 @@ body {
     100% { transform: scale(1); }
 }
 
+/* Área de Conteúdo Real */
 .main-view {
     padding: 2rem;
     overflow-y: auto;
