@@ -163,7 +163,13 @@
         const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imx5b3V4d2d6ZXRnY3JyYmtkY291Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjM0ODUzNDYsImV4cCI6MjA3OTA2MTM0Nn0.SA7HBYRknZZWypUqmqY3Gs1Ga17cnn2NpLw0_z8iV3w';
 
         // Inicializa o cliente Supabase
-        const supabase = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+        const client = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+        client.auth.getSession().then(res => {
+            console.log("Conexão OK! Sessão:", res);
+        }).catch(err => {
+            console.error("Erro ao conectar:", err);
+        });
 
 
         /* ========================================
@@ -319,5 +325,6 @@
     </script>
 </body>
 </html>
+
 
 
