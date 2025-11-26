@@ -33,4 +33,287 @@
                     <input type="email" id="login-user" name="login_identifier" required placeholder="ex: usuario@email.com">
                 </div>
                 <div class="form-group">
-                    <label for="login-pass">
+                    <label for="login-pass">Senha</label>
+                    <input type="password" id="login-pass" name="password" required placeholder="Sua senha">
+                </div>
+                <button type="submit" class="btn-primary">Entrar</button>
+            </form>
+            <!-- BOTÃO PARA IR PARA CADASTRO -->
+            <div class="toggle-auth" onclick="toggleAuthMode('register')">
+                Não tem conta? Cadastre-se
+            </div>
+        </div>
+
+        <!-- FORMULÁRIO DE CADASTRO (Começa oculto com a classe 'hidden') -->
+        <div id="register-form" class="auth-card hidden">
+            <div class="auth-title">Mentalis <i class="ph ph-brain"></i></div>
+            <h2>Criar Conta</h2>
+            <br>
+            <form onsubmit="handleRegister(event)">
+                <div class="form-group">
+                    <label>Nome Completo</label>
+                    <input type="text" name="full_name" required>
+                </div>
+                <div class="form-group">
+                    <label>Data de Nascimento</label>
+                    <input type="date" name="dob" required>
+                </div>
+                <div class="form-group">
+                    <label>CPF</label>
+                    <input type="text" name="cpf" placeholder="000.000.000-00" required>
+                </div>
+                <div class="form-group">
+                    <label>Email</label>
+                    <input type="email" name="email" required>
+                </div>
+                <div class="form-group">
+                    <label>Nome de Usuário</label>
+                    <input type="text" name="username" required>
+                </div>
+                <div class="form-group">
+                    <label>Senha</label>
+                    <input type="password" name="password" required>
+                </div>
+                <div class="form-group">
+                    <label>Confirme a Senha</label>
+                    <input type="password" name="confirm_password" required>
+                </div>
+                <button type="submit" class="btn-primary">Cadastrar</button>
+            </form>
+            <!-- BOTÃO PARA VOLTAR PARA LOGIN -->
+            <div class="toggle-auth" onclick="toggleAuthMode('login')">
+                Já tem conta? Entrar
+            </div>
+        </div>
+    </div>
+
+    <!-- 
+      ========================================
+      TELA PRINCIPAL (DASHBOARD)
+      ========================================
+    -->
+    <div id="main-screen" class="main-layout hidden">
+        <aside class="sidebar">
+            <div class="sidebar-logo">
+                <i class="ph ph-brain"></i> Mentalis
+            </div>
+            <ul class="nav-list">
+                <li class="nav-item">
+                    <a href="#" class="nav-link active"><i class="ph ph-house"></i> Início</a>
+                </li>
+                <li class="nav-item">
+                    <a href="#" class="nav-link"><i class="ph ph-game-controller"></i> Jogos</a>
+                </li>
+                <li class="nav-item">
+                    <a href="#" class="nav-link"><i class="ph ph-gear"></i> Configurações</a>
+                </li>
+                <li class="nav-item">
+                    <a href="#" class="nav-link"><i class="ph ph-question"></i> Ajuda & Suporte</a>
+                </li>
+                <li class="nav-item">
+                    <a href="#" class="nav-link"><i class="ph ph-user"></i> Conta</a>
+                </li>
+                <li class="nav-item logout-btn">
+                    <a href="#" class="nav-link" onclick="handleLogout()"><i class="ph ph-sign-out"></i> Sair</a>
+                </li>
+            </ul>
+        </aside>
+
+        <div class="content-area">
+            <header class="header">
+                <div class="page-title" style="font-weight: bold;">Bem-vindo</div>
+
+                <div class="search-bar">
+                    <i class="ph ph-magnifying-glass search-icon"></i>
+                    <input type="text" placeholder="Pesquisar...">
+                </div>
+
+                <div class="header-controls">
+                    <button class="control-btn" id="music-btn" onclick="toggleMusic()" title="Música Ambiente">
+                        <i class="ph ph-music-notes"></i>
+                    </button>
+                    
+                    <button class="control-btn" onclick="toggleTheme()" title="Alternar Tema">
+                        <i class="ph ph-moon"></i>
+                    </button>
+                </div>
+            </header>
+
+            <main class="main-view">
+                <div class="placeholder-content">
+                    <h2>Olá, Usuário!</h2>
+                    <p>Esta é a estrutura básica do sistema Mentalis.</p>
+                    <p>Você está conectado.</p>
+                </div>
+            </main>
+        </div>
+    </div>
+
+    <!-- Elemento de Áudio (Oculto) -->
+    <audio id="bg-music" loop>
+        <source src="https://cdn.pixabay.com/download/audio/2022/05/27/audio_1808fbf07a.mp3?filename=lofi-study-112191.mp3" type="audio/mpeg">
+    </audio>
+
+    <script>
+        /* ========================================
+         CONFIGURAÇÃO SUPABASE
+         ========================================
+        */
+        const SUPABASE_URL = 'https://lyouxwgzetgcrrbkdcou.supabase.co'; 
+        const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imx5b3V4d2d6ZXRnY3JyYmtkY291Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjM0ODUzNDYsImV4cCI6MjA3OTA2MTM0Nn0.SA7HBYRknZZWypUqmqY3Gs1Ga17cnn2NpLw0_z8iV3w';
+
+        // Inicializa o cliente Supabase
+        const supabase = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+
+        /* ========================================
+         LÓGICA DE NAVEGAÇÃO E UI
+         ========================================
+        */
+
+        // 1. Função Corrigida e Robusta para Alternar entre Login e Cadastro
+        function toggleAuthMode(mode) {
+            // Buscamos os elementos diretamente na hora do clique para garantir que existem
+            const loginEl = document.getElementById('login-form');
+            const registerEl = document.getElementById('register-form');
+            
+            if (!loginEl || !registerEl) {
+                console.error("Erro: Formulários não encontrados no HTML.");
+                return;
+            }
+
+            if (mode === 'register') {
+                // Esconde login, mostra cadastro
+                loginEl.classList.add('hidden');
+                registerEl.classList.remove('hidden');
+            } else {
+                // Esconde cadastro, mostra login
+                registerEl.classList.add('hidden');
+                loginEl.classList.remove('hidden');
+            }
+        }
+
+        // 2. Função para alternar entre Tela de Autenticação e Tela Principal
+        function setAuthScreen(showAuth) {
+            const authScreen = document.getElementById('auth-screen');
+            const mainScreen = document.getElementById('main-screen');
+
+            if (showAuth) {
+                authScreen.classList.remove('hidden');
+                mainScreen.classList.add('hidden');
+            } else {
+                authScreen.classList.add('hidden');
+                mainScreen.classList.remove('hidden');
+            }
+        }
+        
+        /* ========================================
+         SUPABASE AUTH - LÓGICA DE NEGÓCIO
+         ========================================
+        */
+
+        // Monitora mudanças de autenticação (Login/Logout)
+        supabase.auth.onAuthStateChange((event, session) => {
+            console.log('Evento de Autenticação:', event);
+            // Se não tem sessão (!session), mostra auth (true). Se tem sessão, esconde auth (false).
+            setAuthScreen(!session);
+        });
+
+        // Verifica sessão ao carregar a página
+        supabase.auth.getSession().then(({ data: { session } }) => {
+            setAuthScreen(!session);
+        });
+
+        // Lógica de LOGIN
+        async function handleLogin(event) {
+            event.preventDefault();
+            const email = document.getElementById('login-user').value;
+            const password = document.getElementById('login-pass').value;
+
+            const { error } = await supabase.auth.signInWithPassword({
+                email: email,
+                password: password,
+            });
+
+            if (error) {
+                alert("Erro ao entrar: " + error.message);
+                return;
+            }
+            console.log('Login realizado com sucesso!');
+        }
+
+        // Lógica de CADASTRO
+        async function handleRegister(event) {
+            event.preventDefault();
+            const form = event.target;
+            const password = form.password.value;
+            const confirmPassword = form.confirm_password.value;
+
+            if (password !== confirmPassword) {
+                alert("As senhas não coincidem.");
+                return;
+            }
+            
+            const userMetadata = {
+                full_name: form.full_name.value,
+                dob: form.dob.value,
+                cpf: form.cpf.value,
+                username: form.username.value,
+            };
+
+            const { data, error } = await supabase.auth.signUp({
+                email: form.email.value,
+                password: password,
+                options: { data: userMetadata }
+            });
+
+            if (error) {
+                alert("Erro ao cadastrar: " + error.message);
+                return;
+            }
+            
+            alert("Cadastro realizado! Verifique seu e-mail.");
+            // Volta para a tela de login após cadastro
+            toggleAuthMode('login');
+        }
+
+        // Lógica de LOGOUT
+        async function handleLogout() {
+            const { error } = await supabase.auth.signOut();
+            if (error) console.error('Erro ao sair:', error.message);
+        }
+
+        /* ========================================
+         FUNCIONALIDADES EXTRAS (Tema/Música)
+         ========================================
+        */
+        function toggleTheme() {
+            document.body.classList.toggle('dark-mode');
+            const icon = document.querySelector('button[onclick="toggleTheme()"] i');
+            
+            if (document.body.classList.contains('dark-mode')) {
+                icon.classList.replace('ph-moon', 'ph-sun');
+            } else {
+                icon.classList.replace('ph-sun', 'ph-moon');
+            }
+        }
+
+        let isMusicPlaying = false;
+        function toggleMusic() {
+            const audioPlayer = document.getElementById('bg-music');
+            const musicBtn = document.getElementById('music-btn');
+
+            if (isMusicPlaying) {
+                audioPlayer.pause();
+                musicBtn.classList.remove('active-music');
+                musicBtn.querySelector('i').classList.replace('ph-pause', 'ph-music-notes');
+            } else {
+                audioPlayer.play().catch(e => console.log("Interação necessária: ", e));
+                musicBtn.classList.add('active-music');
+                musicBtn.querySelector('i').classList.replace('ph-music-notes', 'ph-pause');
+            }
+            isMusicPlaying = !isMusicPlaying;
+        }
+    </script>
+</body>
+</html>
