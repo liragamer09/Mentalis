@@ -162,11 +162,11 @@
         const SUPABASE_URL = 'https://lyouxwgzetgcrrbkdcou.supabase.co'; 
         const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imx5b3V4d2d6ZXRnY3JyYmtkY291Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjM0ODUzNDYsImV4cCI6MjA3OTA2MTM0Nn0.SA7HBYRknZZWypUqmqY3Gs1Ga17cnn2NpLw0_z8iV3w';
 
-        // CORREÇÃO: Usamos 'supabaseClient' para não conflitar com a biblioteca 'supabase'
-        // Acessamos window.supabase para garantir que pegamos a biblioteca carregada
+        // 1. CORREÇÃO CRÍTICA: Usamos 'supabaseClient' para evitar conflito com a biblioteca global
+        // Usamos window.supabase para garantir que pegamos a biblioteca correta
         const supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
-        console.log("Supabase inicializado:", supabaseClient); // Log para confirmar a correção
+        console.log("Supabase Client inicializado:", supabaseClient);
 
         /* ========================================
          LÓGICA DE NAVEGAÇÃO E UI
@@ -178,6 +178,9 @@
             const loginEl = document.getElementById('login-form');
             const registerEl = document.getElementById('register-form');
             
+            // Verificação de segurança para evitar erros se os elementos não existirem
+            if (!loginEl || !registerEl) return;
+
             if (mode === 'register') {
                 loginEl.classList.add('hidden');
                 registerEl.classList.remove('hidden');
@@ -191,6 +194,8 @@
         function setAuthScreen(showAuth) {
             const authScreen = document.getElementById('auth-screen');
             const mainScreen = document.getElementById('main-screen');
+            
+            if (!authScreen || !mainScreen) return;
 
             if (showAuth) {
                 authScreen.classList.remove('hidden');
@@ -206,8 +211,8 @@
          ========================================
         */
 
-        // 1. Monitora mudanças de autenticação (Login/Logout)
-        // CORREÇÃO: Todas as chamadas agora usam 'supabaseClient'
+        // 2. Monitora mudanças de autenticação (Login/Logout)
+        // IMPORTANTE: Usando 'supabaseClient' em vez de 'supabase'
         supabaseClient.auth.onAuthStateChange((event, session) => {
             console.log('Evento de Autenticação:', event);
             setAuthScreen(!session);
@@ -218,31 +223,32 @@
             setAuthScreen(!session);
         });
 
-        // 2. Lógica de LOGIN
+        // 3. Lógica de LOGIN
         async function handleLogin(event) {
             event.preventDefault();
-            console.log("Tentando fazer login...");
+            console.log("Tentando login...");
 
             const email = document.getElementById('login-user').value;
             const password = document.getElementById('login-pass').value;
 
+            // IMPORTANTE: Usando 'supabaseClient'
             const { data, error } = await supabaseClient.auth.signInWithPassword({
                 email: email,
                 password: password,
             });
 
             if (error) {
-                console.error("Erro no Login:", error);
+                console.error("Erro Login:", error);
                 alert("Erro ao entrar: " + error.message);
                 return;
             }
-            console.log('Login realizado com sucesso!', data);
+            console.log('Login realizado!');
         }
 
-        // 3. Lógica de CADASTRO
+        // 4. Lógica de CADASTRO (Onde estava o erro)
         async function handleRegister(event) {
             event.preventDefault();
-            console.log("Início da função de cadastro.");
+            console.log("Tentando cadastro...");
 
             const form = event.target;
             const password = form.password.value;
@@ -260,7 +266,7 @@
                 username: form.username.value,
             };
 
-            // CORREÇÃO: Chamando supabaseClient
+            // IMPORTANTE: Aqui estava o erro. Trocamos 'supabase.auth' por 'supabaseClient.auth'
             const { data, error } = await supabaseClient.auth.signUp({
                 email: form.email.value,
                 password: password,
@@ -268,20 +274,20 @@
             });
 
             if (error) {
-                console.error("Erro no Cadastro:", error);
+                console.error("Erro Cadastro:", error);
                 alert("Erro ao cadastrar: " + error.message);
                 return;
             }
             
-            alert("Cadastro realizado! Verifique seu e-mail para confirmar a conta (se necessário) ou faça login.");
+            alert("Cadastro realizado! Faça login.");
             toggleAuthMode('login');
         }
 
-        // 4. Lógica de LOGOUT
+        // 5. Lógica de LOGOUT
         async function handleLogout() {
+            // IMPORTANTE: Usando 'supabaseClient'
             const { error } = await supabaseClient.auth.signOut();
             if (error) console.error('Erro ao sair:', error.message);
-            else console.log("Logout efetuado.");
         }
 
         /* ========================================
@@ -292,10 +298,13 @@
             document.body.classList.toggle('dark-mode');
             const icon = document.querySelector('button[onclick="toggleTheme()"] i');
             
-            if (document.body.classList.contains('dark-mode')) {
-                icon.classList.replace('ph-moon', 'ph-sun');
-            } else {
-                icon.classList.replace('ph-sun', 'ph-moon');
+            // Verifica se o ícone existe antes de tentar alterá-lo
+            if (icon) {
+                if (document.body.classList.contains('dark-mode')) {
+                    icon.classList.replace('ph-moon', 'ph-sun');
+                } else {
+                    icon.classList.replace('ph-sun', 'ph-moon');
+                }
             }
         }
 
@@ -304,20 +313,25 @@
             const audioPlayer = document.getElementById('bg-music');
             const musicBtn = document.getElementById('music-btn');
 
+            if (!audioPlayer || !musicBtn) return;
+
             if (isMusicPlaying) {
                 audioPlayer.pause();
                 musicBtn.classList.remove('active-music');
-                musicBtn.querySelector('i').classList.replace('ph-pause', 'ph-music-notes');
+                const icon = musicBtn.querySelector('i');
+                if(icon) icon.classList.replace('ph-pause', 'ph-music-notes');
             } else {
                 audioPlayer.play().catch(e => console.log("Interação necessária: ", e));
                 musicBtn.classList.add('active-music');
-                musicBtn.querySelector('i').classList.replace('ph-music-notes', 'ph-pause');
+                const icon = musicBtn.querySelector('i');
+                if(icon) icon.classList.replace('ph-music-notes', 'ph-pause');
             }
             isMusicPlaying = !isMusicPlaying;
         }
     </script>
 </body>
 </html>
+
 
 
 
