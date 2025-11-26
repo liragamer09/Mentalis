@@ -162,44 +162,32 @@
         const SUPABASE_URL = 'https://lyouxwgzetgcrrbkdcou.supabase.co'; 
         const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imx5b3V4d2d6ZXRnY3JyYmtkY291Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjM0ODUzNDYsImV4cCI6MjA3OTA2MTM0Nn0.SA7HBYRknZZWypUqmqY3Gs1Ga17cnn2NpLw0_z8iV3w';
 
-        // Inicializa o cliente Supabase
-        const client = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+        // CORREÇÃO: Usamos 'supabaseClient' para não conflitar com a biblioteca 'supabase'
+        // Acessamos window.supabase para garantir que pegamos a biblioteca carregada
+        const supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
-        client.auth.getSession().then(res => {
-            console.log("Conexão OK! Sessão:", res);
-        }).catch(err => {
-            console.error("Erro ao conectar:", err);
-        });
-
+        console.log("Supabase inicializado:", supabaseClient); // Log para confirmar a correção
 
         /* ========================================
          LÓGICA DE NAVEGAÇÃO E UI
          ========================================
         */
 
-        // 1. Função Corrigida e Robusta para Alternar entre Login e Cadastro
+        // Função para Alternar entre Login e Cadastro
         function toggleAuthMode(mode) {
-            // Buscamos os elementos diretamente na hora do clique para garantir que existem
             const loginEl = document.getElementById('login-form');
             const registerEl = document.getElementById('register-form');
             
-            if (!loginEl || !registerEl) {
-                console.error("Erro: Formulários não encontrados no HTML.");
-                return;
-            }
-
             if (mode === 'register') {
-                // Esconde login, mostra cadastro
                 loginEl.classList.add('hidden');
                 registerEl.classList.remove('hidden');
             } else {
-                // Esconde cadastro, mostra login
                 registerEl.classList.add('hidden');
                 loginEl.classList.remove('hidden');
             }
         }
 
-        // 2. Função para alternar entre Tela de Autenticação e Tela Principal
+        // Função para alternar entre Tela de Autenticação e Tela Principal
         function setAuthScreen(showAuth) {
             const authScreen = document.getElementById('auth-screen');
             const mainScreen = document.getElementById('main-screen');
@@ -218,81 +206,82 @@
          ========================================
         */
 
-        // Monitora mudanças de autenticação (Login/Logout)
-        supabase.auth.onAuthStateChange((event, session) => {
+        // 1. Monitora mudanças de autenticação (Login/Logout)
+        // CORREÇÃO: Todas as chamadas agora usam 'supabaseClient'
+        supabaseClient.auth.onAuthStateChange((event, session) => {
             console.log('Evento de Autenticação:', event);
-            // Se não tem sessão (!session), mostra auth (true). Se tem sessão, esconde auth (false).
             setAuthScreen(!session);
         });
 
         // Verifica sessão ao carregar a página
-        supabase.auth.getSession().then(({ data: { session } }) => {
+        supabaseClient.auth.getSession().then(({ data: { session } }) => {
             setAuthScreen(!session);
         });
 
-        // Lógica de LOGIN
+        // 2. Lógica de LOGIN
         async function handleLogin(event) {
             event.preventDefault();
+            console.log("Tentando fazer login...");
+
             const email = document.getElementById('login-user').value;
             const password = document.getElementById('login-pass').value;
 
-            const { error } = await supabase.auth.signInWithPassword({
+            const { data, error } = await supabaseClient.auth.signInWithPassword({
                 email: email,
                 password: password,
             });
 
             if (error) {
+                console.error("Erro no Login:", error);
                 alert("Erro ao entrar: " + error.message);
                 return;
             }
-            console.log('Login realizado com sucesso!');
+            console.log('Login realizado com sucesso!', data);
         }
 
-        // Lógica de CADASTRO
+        // 3. Lógica de CADASTRO
         async function handleRegister(event) {
-            if (!event) {
-                console.log("Falha ao tentar cadastro")
-            } else {
-                console.log("Inicio da função de cadastro.")
-                event.preventDefault();
-                const form = event.target;
-                const password = form.password.value;
-                const confirmPassword = form.confirm_password.value;
-    
-                if (password !== confirmPassword) {
-                    alert("As senhas não coincidem.");
-                    return;
-                }
-                
-                const userMetadata = {
-                    full_name: form.full_name.value,
-                    dob: form.dob.value,
-                    cpf: form.cpf.value,
-                    username: form.username.value,
-                };
-    
-                const { data, error } = await supabase.auth.signUp({
-                    email: form.email.value,
-                    password: password,
-                    options: { data: userMetadata }
-                });
-    
-                if (error) {
-                    alert("Erro ao cadastrar: " + error.message);
-                    console.log("ERRO está caindo aqui")
-                    return;
-                }
-                
-                alert("Cadastro realizado! Verifique seu e-mail.");
-                // Volta para a tela de login após cadastro
-                toggleAuthMode('login');
+            event.preventDefault();
+            console.log("Início da função de cadastro.");
+
+            const form = event.target;
+            const password = form.password.value;
+            const confirmPassword = form.confirm_password.value;
+
+            if (password !== confirmPassword) {
+                alert("As senhas não coincidem.");
+                return;
             }
+            
+            const userMetadata = {
+                full_name: form.full_name.value,
+                dob: form.dob.value,
+                cpf: form.cpf.value,
+                username: form.username.value,
+            };
+
+            // CORREÇÃO: Chamando supabaseClient
+            const { data, error } = await supabaseClient.auth.signUp({
+                email: form.email.value,
+                password: password,
+                options: { data: userMetadata }
+            });
+
+            if (error) {
+                console.error("Erro no Cadastro:", error);
+                alert("Erro ao cadastrar: " + error.message);
+                return;
+            }
+            
+            alert("Cadastro realizado! Verifique seu e-mail para confirmar a conta (se necessário) ou faça login.");
+            toggleAuthMode('login');
         }
 
-        // Lógica de LOGOUT
+        // 4. Lógica de LOGOUT
         async function handleLogout() {
-            const { error } = await supabase.auth.signOut();
+            const { error } = await supabaseClient.auth.signOut();
             if (error) console.error('Erro ao sair:', error.message);
+            else console.log("Logout efetuado.");
         }
 
         /* ========================================
@@ -329,6 +318,7 @@
     </script>
 </body>
 </html>
+
 
 
 
