@@ -155,6 +155,7 @@
     <!-- Elemento de Áudio (Oculto) -->
     <audio id="bg-music" loop>
         <source src="https://cdn.pixabay.com/download/audio/2022/05/27/audio_1808fbf07a.mp3?filename=lofi-study-112191.mp3" type="audio/mpeg">
+        
     </audio>
 
     <script>
@@ -339,6 +340,8 @@
         async function handleLogout() {
             const { error } = await supabaseClient.auth.signOut();
             if (error) console.error('Erro ao sair:', error.message);
+
+            window.reload();
         }
 
         /* ========================================
@@ -375,3 +378,4 @@
     </script>
 </body>
 </html>
+
