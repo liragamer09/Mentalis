@@ -237,6 +237,8 @@
             const email = document.getElementById('login-user').value;
             const password = document.getElementById('login-pass').value;
 
+            console.log(email)
+            console.log(password)
             const { error } = await supabaseClient.auth.signInWithPassword({
                 email: email,
                 password: password,
@@ -317,3 +319,4 @@
     </script>
 </body>
 </html>
+
