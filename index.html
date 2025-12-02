@@ -4,25 +4,15 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Mentalis</title>
-    <!-- Link para o arquivo CSS externo -->
     <link rel="stylesheet" href="style.css">
-
-    <!-- Ícones (Phosphor Icons) -->
     <script src="https://unpkg.com/@phosphor-icons/web"></script>
-    
-    <!-- SDK do Supabase -->
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 </head>
 <body>
 
-    <!-- 
-      ========================================
-      ÁREA DE LOGIN / CADASTRO 
-      ========================================
-    -->
+    <!-- TELA DE LOGIN / CADASTRO -->
     <div id="auth-screen" class="auth-container">
-        
-        <!-- FORMULÁRIO DE LOGIN -->
+        <!-- Login -->
         <div id="login-form" class="auth-card">
             <div class="auth-title">Mentalis <i class="ph ph-brain"></i></div>
             <h2>Entrar</h2>
@@ -38,13 +28,12 @@
                 </div>
                 <button type="submit" class="btn-primary">Entrar</button>
             </form>
-            <!-- BOTÃO PARA IR PARA CADASTRO -->
             <div class="toggle-auth" onclick="toggleAuthMode('register')">
                 Não tem conta? Cadastre-se
             </div>
         </div>
 
-        <!-- FORMULÁRIO DE CADASTRO (Começa oculto com a classe 'hidden') -->
+        <!-- Cadastro -->
         <div id="register-form" class="auth-card hidden">
             <div class="auth-title">Mentalis <i class="ph ph-brain"></i></div>
             <h2>Criar Conta</h2>
@@ -80,48 +69,32 @@
                 </div>
                 <button type="submit" class="btn-primary">Cadastrar</button>
             </form>
-            <!-- BOTÃO PARA VOLTAR PARA LOGIN -->
             <div class="toggle-auth" onclick="toggleAuthMode('login')">
                 Já tem conta? Entrar
             </div>
         </div>
     </div>
 
-    <!-- 
-      ========================================
-      TELA PRINCIPAL (DASHBOARD)
-      ========================================
-    -->
+    <!-- TELA PRINCIPAL -->
     <div id="main-screen" class="main-layout hidden">
         <aside class="sidebar">
             <div class="sidebar-logo">
                 <i class="ph ph-brain"></i> Mentalis
             </div>
             <ul class="nav-list">
-                <li class="nav-item">
-                    <a href="#" class="nav-link active"><i class="ph ph-house"></i> Início</a>
-                </li>
-                <li class="nav-item">
-                    <a href="#" class="nav-link"><i class="ph ph-game-controller"></i> Jogos</a>
-                </li>
-                <li class="nav-item">
-                    <a href="#" class="nav-link"><i class="ph ph-gear"></i> Configurações</a>
-                </li>
-                <li class="nav-item">
-                    <a href="#" class="nav-link"><i class="ph ph-question"></i> Ajuda & Suporte</a>
-                </li>
-                <li class="nav-item">
-                    <a href="#" class="nav-link"><i class="ph ph-user"></i> Conta</a>
-                </li>
-                <li class="nav-item logout-btn">
-                    <a href="#" class="nav-link" onclick="handleLogout()"><i class="ph ph-sign-out"></i> Sair</a>
-                </li>
+                <li class="nav-item"><a href="#" class="nav-link active"><i class="ph ph-house"></i> Início</a></li>
+                <li class="nav-item"><a href="#" class="nav-link"><i class="ph ph-game-controller"></i> Jogos</a></li>
+                <li class="nav-item"><a href="#" class="nav-link"><i class="ph ph-gear"></i> Configurações</a></li>
+                <li class="nav-item"><a href="#" class="nav-link"><i class="ph ph-question"></i> Ajuda & Suporte</a></li>
+                <li class="nav-item"><a href="#" class="nav-link"><i class="ph ph-user"></i> Conta</a></li>
+                <li class="nav-item logout-btn"><a href="#" class="nav-link" onclick="handleLogout()"><i class="ph ph-sign-out"></i> Sair</a></li>
             </ul>
         </aside>
 
         <div class="content-area">
             <header class="header">
-                <div class="page-title" style="font-weight: bold;">Bem-vindo</div>
+                <!-- Adicionei um ID aqui para mudar o texto via JS -->
+                <div id="header-welcome" class="page-title" style="font-weight: bold;">Bem-vindo</div>
 
                 <div class="search-bar">
                     <i class="ph ph-magnifying-glass search-icon"></i>
@@ -129,56 +102,49 @@
                 </div>
 
                 <div class="header-controls">
-                    <button class="control-btn" id="music-btn" onclick="toggleMusic()" title="Música Ambiente">
-                        <i class="ph ph-music-notes"></i>
-                    </button>
-                    
-                    <button class="control-btn" onclick="toggleTheme()" title="Alternar Tema">
-                        <i class="ph ph-moon"></i>
-                    </button>
+                    <button class="control-btn" id="music-btn" onclick="toggleMusic()" title="Música Ambiente"><i class="ph ph-music-notes"></i></button>
+                    <button class="control-btn" onclick="toggleTheme()" title="Alternar Tema"><i class="ph ph-moon"></i></button>
                 </div>
             </header>
 
             <main class="main-view">
                 <div class="placeholder-content">
-                    <h2>Olá, Usuário!</h2>
-                    <p>Esta é a estrutura básica do sistema Mentalis.</p>
-                    <p>Você está conectado.</p>
+                    <!-- Adicionei ID e SPANs para injetar os dados -->
+                    <h2 id="display-name">Olá, Usuário!</h2>
+                    <br>
+                    <p><strong>Seus dados carregados do Supabase:</strong></p>
+                    <ul style="margin-top: 10px; list-style: none;">
+                        <li>Usuário: <span id="display-username">...</span></li>
+                        <li>CPF: <span id="display-cpf">...</span></li>
+                        <li>Email: <span id="display-email">...</span></li>
+                    </ul>
                 </div>
             </main>
         </div>
     </div>
 
-    <!-- Elemento de Áudio (Oculto) -->
     <audio id="bg-music" loop>
         <source src="https://cdn.pixabay.com/download/audio/2022/05/27/audio_1808fbf07a.mp3?filename=lofi-study-112191.mp3" type="audio/mpeg">
     </audio>
 
     <script>
-        /* ========================================
-         CONFIGURAÇÃO SUPABASE
-         ========================================
-        */
+        // --- CONFIGURAÇÃO SUPABASE ---
         const SUPABASE_URL = 'https://lyouxwgzetgcrrbkdcou.supabase.co'; 
         const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imx5b3V4d2d6ZXRnY3JyYmtkY291Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjM0ODUzNDYsImV4cCI6MjA3OTA2MTM0Nn0.SA7HBYRknZZWypUqmqY3Gs1Ga17cnn2NpLw0_z8iV3w';
-
-        // 1. CORREÇÃO CRÍTICA: Usamos 'supabaseClient' para evitar conflito com a biblioteca global
-        // Usamos window.supabase para garantir que pegamos a biblioteca correta
+        
         const supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
-        console.log("Supabase Client inicializado:", supabaseClient);
+        // --- ELEMENTOS UI ---
+        const authScreen = document.getElementById('auth-screen');
+        const mainScreen = document.getElementById('main-screen');
+        const loginForm = document.getElementById('login-form');
+        const registerForm = document.getElementById('register-form');
+        const body = document.body;
 
-        /* ========================================
-         LÓGICA DE NAVEGAÇÃO E UI
-         ========================================
-        */
-
-        // Função para Alternar entre Login e Cadastro
+        // --- NAVEGAÇÃO ---
         function toggleAuthMode(mode) {
             const loginEl = document.getElementById('login-form');
             const registerEl = document.getElementById('register-form');
-            
-            // Verificação de segurança para evitar erros se os elementos não existirem
             if (!loginEl || !registerEl) return;
 
             if (mode === 'register') {
@@ -190,13 +156,7 @@
             }
         }
 
-        // Função para alternar entre Tela de Autenticação e Tela Principal
         function setAuthScreen(showAuth) {
-            const authScreen = document.getElementById('auth-screen');
-            const mainScreen = document.getElementById('main-screen');
-            
-            if (!authScreen || !mainScreen) return;
-
             if (showAuth) {
                 authScreen.classList.remove('hidden');
                 mainScreen.classList.add('hidden');
@@ -205,51 +165,93 @@
                 mainScreen.classList.remove('hidden');
             }
         }
-        
-        /* ========================================
-         SUPABASE AUTH - LÓGICA DE NEGÓCIO
-         ========================================
-        */
 
-        // 2. Monitora mudanças de autenticação (Login/Logout)
-        // IMPORTANTE: Usando 'supabaseClient' em vez de 'supabase'
-        supabaseClient.auth.onAuthStateChange((event, session) => {
-            console.log('Evento de Autenticação:', event);
+        // --- LÓGICA DE DADOS DO USUÁRIO ---
+        
+        // 1. Função para buscar os dados na tabela 'profiles'
+        async function fetchUserProfile(userId) {
+            console.log("Buscando perfil para ID:", userId);
+            
+            const { data, error } = await supabaseClient
+                .from('profiles') // Nome da tabela que criamos no SQL
+                .select('*')      // Selecionar todas as colunas
+                .eq('id', userId) // Onde o ID for igual ao usuário logado
+                .single();        // Esperamos apenas 1 resultado
+
+            if (error) {
+                console.error("Erro ao buscar perfil:", error.message);
+                return null;
+            }
+            return data;
+        }
+
+        // 2. Função para atualizar a tela com os dados
+        function updateUIWithProfile(profile, email) {
+            // Se tivermos o perfil (nome, cpf, etc)
+            if (profile) {
+                document.getElementById('header-welcome').innerText = `Bem-vindo, ${profile.full_name.split(' ')[0]}`; // Pega só o primeiro nome
+                document.getElementById('display-name').innerText = `Olá, ${profile.full_name}!`;
+                document.getElementById('display-username').innerText = profile.username || '-';
+                document.getElementById('display-cpf').innerText = profile.cpf || '-';
+            } 
+            // Sempre temos o e-mail vindo da sessão
+            document.getElementById('display-email').innerText = email;
+        }
+
+        // --- AUTH SUPABASE ---
+
+        // Monitora Login/Logout
+        supabaseClient.auth.onAuthStateChange(async (event, session) => {
+            console.log('Evento Auth:', event);
+            
+            // Alterna telas
             setAuthScreen(!session);
+
+            // Se o usuário acabou de logar (tem sessão), buscamos os dados dele
+            if (session) {
+                const userEmail = session.user.email;
+                const userId = session.user.id;
+                
+                // Busca dados extras na tabela profiles
+                const profileData = await fetchUserProfile(userId);
+                
+                // Atualiza a tela
+                updateUIWithProfile(profileData, userEmail);
+            }
         });
 
-        // Verifica sessão ao carregar a página
+        // Verifica sessão inicial
         supabaseClient.auth.getSession().then(({ data: { session } }) => {
             setAuthScreen(!session);
+            if(session) {
+                // Se já estava logado, busca os dados também
+                fetchUserProfile(session.user.id).then(profile => {
+                    updateUIWithProfile(profile, session.user.email);
+                });
+            }
         });
 
-        // 3. Lógica de LOGIN
+        // Login
         async function handleLogin(event) {
             event.preventDefault();
-            console.log("Tentando login...");
-
             const email = document.getElementById('login-user').value;
             const password = document.getElementById('login-pass').value;
 
-            // IMPORTANTE: Usando 'supabaseClient'
-            const { data, error } = await supabaseClient.auth.signInWithPassword({
+            const { error } = await supabaseClient.auth.signInWithPassword({
                 email: email,
                 password: password,
             });
 
             if (error) {
-                console.error("Erro Login:", error);
                 alert("Erro ao entrar: " + error.message);
                 return;
             }
-            console.log('Login realizado!');
+            // O onAuthStateChange cuidará do resto
         }
 
-        // 4. Lógica de CADASTRO (Onde estava o erro)
+        // Cadastro
         async function handleRegister(event) {
             event.preventDefault();
-            console.log("Tentando cadastro...");
-
             const form = event.target;
             const password = form.password.value;
             const confirmPassword = form.confirm_password.value;
@@ -266,7 +268,6 @@
                 username: form.username.value,
             };
 
-            // IMPORTANTE: Aqui estava o erro. Trocamos 'supabase.auth' por 'supabaseClient.auth'
             const { data, error } = await supabaseClient.auth.signUp({
                 email: form.email.value,
                 password: password,
@@ -274,37 +275,27 @@
             });
 
             if (error) {
-                console.error("Erro Cadastro:", error);
                 alert("Erro ao cadastrar: " + error.message);
                 return;
             }
-            
-            alert("Cadastro realizado! Faça login.");
+            alert("Cadastro realizado! Faça Login.");
             toggleAuthMode('login');
         }
 
-        // 5. Lógica de LOGOUT
+        // Logout
         async function handleLogout() {
-            // IMPORTANTE: Usando 'supabaseClient'
             const { error } = await supabaseClient.auth.signOut();
-            if (error) console.error('Erro ao sair:', error.message);
+            if (error) console.error(error);
         }
 
-        /* ========================================
-         FUNCIONALIDADES EXTRAS (Tema/Música)
-         ========================================
-        */
+        // --- EXTRAS ---
         function toggleTheme() {
-            document.body.classList.toggle('dark-mode');
+            body.classList.toggle('dark-mode');
             const icon = document.querySelector('button[onclick="toggleTheme()"] i');
-            
-            // Verifica se o ícone existe antes de tentar alterá-lo
-            if (icon) {
-                if (document.body.classList.contains('dark-mode')) {
-                    icon.classList.replace('ph-moon', 'ph-sun');
-                } else {
-                    icon.classList.replace('ph-sun', 'ph-moon');
-                }
+            if (body.classList.contains('dark-mode')) {
+                icon.classList.replace('ph-moon', 'ph-sun');
+            } else {
+                icon.classList.replace('ph-sun', 'ph-moon');
             }
         }
 
@@ -312,29 +303,17 @@
         function toggleMusic() {
             const audioPlayer = document.getElementById('bg-music');
             const musicBtn = document.getElementById('music-btn');
-
-            if (!audioPlayer || !musicBtn) return;
-
             if (isMusicPlaying) {
                 audioPlayer.pause();
                 musicBtn.classList.remove('active-music');
-                const icon = musicBtn.querySelector('i');
-                if(icon) icon.classList.replace('ph-pause', 'ph-music-notes');
+                musicBtn.querySelector('i').classList.replace('ph-pause', 'ph-music-notes');
             } else {
-                audioPlayer.play().catch(e => console.log("Interação necessária: ", e));
+                audioPlayer.play().catch(e => console.log(e));
                 musicBtn.classList.add('active-music');
-                const icon = musicBtn.querySelector('i');
-                if(icon) icon.classList.replace('ph-music-notes', 'ph-pause');
+                musicBtn.querySelector('i').classList.replace('ph-music-notes', 'ph-pause');
             }
             isMusicPlaying = !isMusicPlaying;
         }
     </script>
 </body>
 </html>
-
-
-
-
-
-
-
