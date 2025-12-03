@@ -339,9 +339,10 @@
         // 5. Lógica de LOGOUT
         async function handleLogout() {
             const { error } = await supabaseClient.auth.signOut();
+            audioPlayer.pause();
             if (error) console.error('Erro ao sair:', error.message);
 
-            window.reload();
+           
         }
 
         /* ========================================
@@ -373,9 +374,10 @@
                 musicBtn.classList.add('active-music');
                 musicBtn.querySelector('i').classList.replace('ph-music-notes', 'ph-pause');
             }
-            isMusicPlaying = !isMusicPlaying;
+            
         }
     </script>
 </body>
 </html>
+
 
