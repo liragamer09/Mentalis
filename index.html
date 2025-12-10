@@ -112,7 +112,7 @@
                     <a href="#" class="nav-link"><i class="ph ph-user"></i> Conta</a>
                 </li>
                 <li class="nav-item logout-btn">
-                    <a href="#" class="nav-link" onclick="handleLogout()"><i class="ph ph-sign-out"></i> Sair</a>
+                    <a href="" class="nav-link" onclick="handleLogout()"><i class="ph ph-sign-out"></i> Sair</a>
                 </li>
             </ul>
         </aside>
@@ -258,7 +258,8 @@
                 
                 // Atualiza a interface
                 updateUIWithProfile(profileData, userEmail);
-            }
+            }  
+            
         });
 
         // Verifica sessão ao carregar a página
@@ -339,10 +340,7 @@
         // 5. Lógica de LOGOUT
         async function handleLogout() {
             const { error } = await supabaseClient.auth.signOut();
-            audioPlayer.pause();
-            if (error) console.error('Erro ao sair:', error.message);
-
-           
+             if (error) console.error('Erro ao sair:', error.message)
         }
 
         /* ========================================
@@ -365,17 +363,27 @@
             const audioPlayer = document.getElementById('bg-music');
             const musicBtn = document.getElementById('music-btn');
 
-            if (isMusicPlaying) {
+            if (isMusicPlaying) {           
                 audioPlayer.pause();
                 musicBtn.classList.remove('active-music');
                 musicBtn.querySelector('i').classList.replace('ph-pause', 'ph-music-notes');
+                console.log("musica parou")
+                
+                
             } else {
                 audioPlayer.play().catch(e => console.log("Interação necessária: ", e));
                 musicBtn.classList.add('active-music');
                 musicBtn.querySelector('i').classList.replace('ph-music-notes', 'ph-pause');
+                console.log("musica tocando")
+                
             }
+
+            isMusicPlaying = !isMusicPlaying;
+            
             
         }
+
+    
     </script>
 </body>
 </html>
